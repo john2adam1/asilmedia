@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script src="https://quge5.com/88/tag.min.js" data-zone="217601" async data-cfasync="false"></script>
+        <script src="https://5gvci.com/act/files/tag.min.js?z=10698482" data-cfasync="false" async></script>
       </head>
       <body className="bg-background text-foreground antialiased overflow-x-hidden">
         <Navbar />
