@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Movie } from '@/components/movies/MovieCard'
 import { supabase } from '@/lib/supabase'
-import { Trash2, Plus, Film, LogOut } from 'lucide-react'
+import { Trash2, Plus, Film, LogOut, Pencil, X } from 'lucide-react'
 
 export default function AdminDashboard() {
     const [isAuthorized, setIsAuthorized] = useState(false)
@@ -11,6 +11,7 @@ export default function AdminDashboard() {
     const [movies, setMovies] = useState<Movie[]>([])
     const [loading, setLoading] = useState(false)
     const [showForm, setShowForm] = useState(false)
+    const [editingId, setEditingId] = useState<string | null>(null)
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -48,22 +49,55 @@ export default function AdminDashboard() {
         else fetchMovies()
     }
 
+    function handleEdit(movie: Movie) {
+        setEditingId(movie.id)
+        setFormData({
+            title: movie.title,
+            description: movie.description,
+            thumbnail_url: movie.thumbnail_url,
+            video_url: movie.video_url,
+            category: movie.category,
+            is_hero: movie.is_hero || false
+        })
+        setShowForm(true)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    function resetForm() {
+        setEditingId(null)
+        setShowForm(false)
+        setFormData({
+            title: '',
+            description: '',
+            thumbnail_url: '',
+            video_url: '',
+            category: 'Action',
+            is_hero: false
+        })
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         setLoading(true)
-        const { error } = await supabase.from('movies').insert([formData])
-        if (error) alert(error.message)
-        else {
-            setShowForm(false)
-            fetchMovies()
-            setFormData({
-                title: '',
-                description: '',
-                thumbnail_url: '',
-                video_url: '',
-                category: 'Action',
-                is_hero: false
-            })
+
+        if (editingId) {
+            const { error } = await supabase
+                .from('movies')
+                .update(formData)
+                .eq('id', editingId)
+
+            if (error) alert(error.message)
+            else {
+                resetForm()
+                fetchMovies()
+            }
+        } else {
+            const { error } = await supabase.from('movies').insert([formData])
+            if (error) alert(error.message)
+            else {
+                resetForm()
+                fetchMovies()
+            }
         }
         setLoading(false)
     }
@@ -109,10 +143,13 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex gap-4">
                     <button
-                        onClick={() => setShowForm(!showForm)}
+                        onClick={() => {
+                            if (showForm) resetForm()
+                            else setShowForm(true)
+                        }}
                         className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-2 rounded-lg font-bold transition-all shadow-lg shadow-primary/20"
                     >
-                        <Plus className="w-5 h-5" />
+                        {showForm ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                         {showForm ? 'Cancel' : 'Add Movie'}
                     </button>
                     <button
@@ -126,7 +163,9 @@ export default function AdminDashboard() {
 
             {showForm && (
                 <form onSubmit={handleSubmit} className="mb-12 bg-card border border-border rounded-xl p-8 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
-                    <h2 className="text-xl font-bold mb-6 uppercase tracking-wider">New Movie Entry</h2>
+                    <h2 className="text-xl font-bold mb-6 uppercase tracking-wider">
+                        {editingId ? 'Edit Movie' : 'New Movie Entry'}
+                    </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase text-muted">Title</label>
@@ -202,7 +241,7 @@ export default function AdminDashboard() {
                         disabled={loading}
                         className="bg-primary text-white font-bold px-10 py-3 rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2 disabled:opacity-50"
                     >
-                        {loading ? 'Adding...' : 'Save Movie'}
+                        {loading ? 'Saving...' : editingId ? 'Update Movie' : 'Save Movie'}
                     </button>
                 </form>
             )}
@@ -240,12 +279,22 @@ export default function AdminDashboard() {
                                         {new Date(movie.created_at).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => handleDelete(movie.id)}
-                                            className="p-2 text-muted hover:text-primary transition-colors hover:bg-primary/10 rounded-lg"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
+                                        <div className="flex justify-end gap-2">
+                                            <button
+                                                onClick={() => handleEdit(movie)}
+                                                className="p-2 text-muted hover:text-primary transition-colors hover:bg-primary/10 rounded-lg"
+                                                title="Edit Movie"
+                                            >
+                                                <Pencil className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(movie.id)}
+                                                className="p-2 text-muted hover:text-red-500 transition-colors hover:bg-red-500/10 rounded-lg"
+                                                title="Delete Movie"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

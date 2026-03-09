@@ -9,6 +9,7 @@ export interface Movie {
     thumbnail_url: string
     video_url: string
     category: string
+    is_hero?: boolean
     created_at: string
 }
 
