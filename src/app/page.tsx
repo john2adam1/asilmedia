@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
-import { Hero } from '@/components/movies/Hero'
 import { MovieCard, Movie } from '@/components/movies/MovieCard'
-import { TopAd } from '@/components/layout/AdPlaceholder'
+import { PremiereSection } from '@/components/movies/PremiereSection'
 
 // Force dynamic as we want fresh content from Supabase
 export const dynamic = 'force-dynamic'
@@ -13,31 +12,37 @@ export default async function Home() {
     .order('created_at', { ascending: false })
 
   const typedMovies = (movies as Movie[]) || []
-  const heroMovie = typedMovies.find(m => (m as any).is_hero) || typedMovies[0]
-  const listMovies = typedMovies.filter(m => m.id !== heroMovie?.id)
+  const premiereMovies = typedMovies.slice(0, 10)
+  const regularMovies = typedMovies.slice(0)
 
   return (
-    <div className="flex flex-col gap-8 pb-12">
-      {heroMovie && <Hero movie={heroMovie} />}
+    <div className="flex flex-col gap-0 pb-12 pt-24 md:pt-32">
+      <div className="max-w-6xl mx-auto px-4 w-full relative z-10">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full -mt-20 relative z-10">
-        <TopAd />
+        <PremiereSection movies={premiereMovies} />
 
         <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white tracking-tight">Recent Releases</h2>
-            <div className="h-px flex-1 bg-border ml-6 hidden md:block opacity-20" />
+          <div className="flex items-center justify-between mb-8 group cursor-pointer">
+            <div className="flex flex-col">
+              <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest flex items-center gap-2 group-hover:text-primary transition-colors">
+                TARJIMA KINOLAR <span className="text-white/40 text-lg">2026</span>
+              </h2>
+              <p className="text-muted text-sm font-medium">O'zbek tilidagi kinolar</p>
+            </div>
+            <button className="bg-card hover:bg-card-hover text-muted hover:text-white px-4 py-2 rounded text-xs font-bold transition-colors border border-white/5 uppercase tracking-widest mt-auto">
+              Barchasi
+            </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8">
-            {listMovies.map((movie) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-10">
+            {regularMovies.map((movie) => (
               <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
 
-          {listMovies.length === 0 && (
-            <div className="text-center py-20 bg-card rounded-xl border border-border dashed">
-              <p className="text-muted italic">No movies found in the database. Add some via the Admin panel.</p>
+          {regularMovies.length === 0 && (
+            <div className="text-center py-20 bg-card/30 rounded-lg border border-border border-dashed">
+              <p className="text-muted text-sm italic">Hozircha malumotlar yo'q...</p>
             </div>
           )}
         </section>
