@@ -1,0 +1,7 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark teal background with rounded corners -->
+  <rect width="32" height="32" rx="8" fill="#0F766E"/>
+  
+  <!-- Play button icon in lighter teal -->
+  <path d="M12 8V24L22 16L12 8Z" fill="#5EEAD4"/>
+</svg>
