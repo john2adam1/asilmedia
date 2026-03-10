@@ -1,6 +1,7 @@
 import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -39,8 +40,10 @@ export default function RootLayout({
       <head>
         <meta name="monetag" content="268c533339d8d783ef9781fbe99d2927" />
         <script src="https://5gvci.com/act/files/tag.min.js?z=10702261" data-cfasync="false" async></script>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="218305" async data-cfasync="false"></script>
       </head>
       <body className="bg-background text-foreground antialiased overflow-x-hidden">
+        <ServiceWorkerRegistration />
         <Navbar />
         <main className="min-h-screen">
           {children}
