@@ -1,52 +1,70 @@
-import { supabase } from '@/lib/supabase'
-import { MovieCard, Movie } from '@/components/movies/MovieCard'
-import { PremiereSection } from '@/components/movies/PremiereSection'
+import { Clapperboard, Play, Rocket, MessageSquare, Cpu, Zap, Star, Shield, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
-// Force dynamic as we want fresh content from Supabase
-export const dynamic = 'force-dynamic'
-
-export default async function Home() {
-  const { data: movies } = await supabase
-    .from('movies')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  const typedMovies = (movies as Movie[]) || []
-  const premiereMovies = typedMovies.slice(0, 10)
-  const regularMovies = typedMovies.slice(0)
-
+export default function Home() {
   return (
-    <div className="flex flex-col gap-0 pb-12 pt-24 md:pt-32">
-      <div className="max-w-6xl mx-auto px-4 w-full relative z-10">
+    <div className="flex flex-col w-full relative">
+      {/* Hero Section with Movie Poster Background */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-20">
+        {/* Background Image with Dark Overlay */}
+        <div className="absolute inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[20s] animate-pulse-slow"
+            style={{
+              backgroundImage: "url('/movie-bg.png')",
+              opacity: 0.6
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background/50" />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
 
-        <PremiereSection movies={premiereMovies} />
+        <div className="max-w-5xl mx-auto text-left w-full relative z-10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] max-w-4xl">
+            Bepul online kinolar, <br />
+            istalgan joyda ko'ring.
+          </h1>
 
-        <section>
-          <div className="flex items-center justify-between mb-8 group cursor-pointer">
-            <div className="flex flex-col">
-              <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest flex items-center gap-2 group-hover:text-primary transition-colors">
-                TARJIMA KINOLAR <span className="text-white/40 text-lg">2026</span>
-              </h2>
-              <p className="text-muted text-sm font-medium">O'zbek tilidagi kinolar</p>
-            </div>
-            <button className="bg-card hover:bg-card-hover text-muted hover:text-white px-4 py-2 rounded text-xs font-bold transition-colors border border-white/5 uppercase tracking-widest mt-auto">
-              Barchasi
-            </button>
+          <p className="max-w-2xl text-zinc-300 text-lg md:text-xl font-normal leading-relaxed">
+            Izlaganingizni topish endi oson! AsilMedia sizga eng yaxshi
+            va sifatli filmlarni mutlaqo bepul tomosha qilish imkonini beradi.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-6">
+            <Link href="https://t.me/medicus_admin" className="px-8 py-4 bg-primary hover:bg-primary-hover text-black rounded-full font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+              Hoziroq Ko'rish
+            </Link>
+            <Link href="https://t.me/medicus_admin" className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full font-medium text-lg transition-all glass">
+              Biz bilan bog'lanish
+            </Link>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-10">
-            {regularMovies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
-            ))}
-          </div>
-
-          {regularMovies.length === 0 && (
-            <div className="text-center py-20 bg-card/30 rounded-lg border border-border border-dashed">
-              <p className="text-muted text-sm italic">Hozircha malumotlar yo'q...</p>
+      {/* Vibe Coding Banner Section */}
+      <section className="px-4 py-20 relative overflow-hidden border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="relative glass rounded-3xl p-8 md:p-12 border-white/10 overflow-hidden group">
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="space-y-4 text-center md:text-left max-w-xl">
+                <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+                  Vibe codingni o'rgatamiz
+                </h2>
+                <p className="text-zinc-400 text-lg leading-relaxed">
+                  Sun'iy intellekt va eng zamonaviy texnologiyalar yordamida
+                  dasturlashni o'rganing. Kelajakni biz bilan kashf qiling.
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <Link href="https://t.me/medicus_admin" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black hover:bg-primary hover:text-white rounded-2xl font-bold text-lg transition-all active:scale-95 group">
+                  Yozilish <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
             </div>
-          )}
-        </section>
-      </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   )
 }
